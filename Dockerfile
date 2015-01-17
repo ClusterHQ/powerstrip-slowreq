@@ -10,8 +10,6 @@ RUN         apt-get update && \
             apt-get -y install -q build-essential && \
             apt-get -y install -q python-dev libffi-dev libssl-dev python-pip
 
-# TODO pip install --something requirements.txt
-
 RUN         mkdir /app
 ADD         . /app
 
