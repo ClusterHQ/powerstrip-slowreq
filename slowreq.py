@@ -18,8 +18,10 @@ class AdapterResource(resource.Resource):
         # The desired response is the entire client request
         # payload, unmodified.
         def waited():
-            request.write(json.dumps(
-                requestJson["ClientRequest"]))
+            request.write(json.dumps({
+                "PowerstripProtocolVersion": 1,
+                "ModifiedClientRequest":
+                    requestJson["ClientRequest"]}))
             request.finish()
         deferLater(reactor, 1, waited)
         return server.NOT_DONE_YET

@@ -26,6 +26,7 @@ class TestSlowRequests(TestCase):
     def test_passthrough_request(self):
         d = self.client.post('http://127.0.0.1:%d/slowreq-adapter' % (self.slowreqPort,),
                       json.dumps({
+                          "PowerstripProtocolVersion": 1,
                           "Type": "pre-hook",
                           "ClientRequest": {
                               "Method": "POST",
@@ -40,8 +41,10 @@ class TestSlowRequests(TestCase):
         d.addCallback(treq.json_content)
         def verify(body):
             self.assertEqual(body, {
-              "Method": "POST",
-              "Request": "/fictional",
-              "Body": {"Number": 7}})
+                "PowerstripProtocolVersion": 1,
+                "ModifiedClientRequest": {
+                  "Method": "POST",
+                  "Request": "/fictional",
+                  "Body": {"Number": 7}}})
         d.addCallback(verify)
         return d
