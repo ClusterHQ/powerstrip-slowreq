@@ -31,7 +31,7 @@ class TestSlowRequests(TestCase):
                           "ClientRequest": {
                               "Method": "POST",
                               "Request": "/fictional",
-                              "Body": {"Number": 7}}
+                              "Body": json.dumps({"Number": 7})}
                           }),
                       headers={'Content-Type': ['application/json']})
         def verifyResponseCode(response):
@@ -45,6 +45,6 @@ class TestSlowRequests(TestCase):
                 "ModifiedClientRequest": {
                   "Method": "POST",
                   "Request": "/fictional",
-                  "Body": {"Number": 7}}})
+                  "Body": json.dumps({"Number": 7})}})
         d.addCallback(verify)
         return d
