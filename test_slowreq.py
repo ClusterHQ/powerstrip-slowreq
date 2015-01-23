@@ -48,3 +48,34 @@ class TestSlowRequests(TestCase):
                   "Body": json.dumps({"Number": 7})}})
         d.addCallback(verify)
         return d
+
+    def test_passthrough_posthook(self):
+        d = self.client.post('http://127.0.0.1:%d/slowreq-adapter' % (self.slowreqPort,),
+                      json.dumps({
+                          "PowerstripProtocolVersion": 1,
+                          "Type": "post-hook",
+                          "ClientRequest": {
+                              "Method": "POST",
+                              "Request": "/v1.16/containers/create",
+                              "Body": json.dumps({"Number": 1}),
+                          },
+                          "ServerResponse": {
+                              "ContentType": "application/json",
+                              "Body": json.dumps({"Number": 3}),
+                              "Code": 200,
+                          }}),
+                          headers={'Content-Type': ['application/json']})
+        def verifyResponseCode(response):
+            self.assertEqual(response.code, 200)
+            return response
+        d.addCallback(verifyResponseCode)
+        d.addCallback(treq.json_content)
+        def verify(body):
+            self.assertEqual(body, {
+                "PowerstripProtocolVersion": 1,
+                "ModifiedServerResponse": {
+                  "ContentType": "application/json",
+                  "Code": 200,
+                  "Body": json.dumps({"Number": 3})}})
+        d.addCallback(verify)
+        return d
